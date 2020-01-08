@@ -21,11 +21,7 @@ const authenticateUser = async(req, res, next) => {
     // If the user's credentials are available...
     if (credentials) {
       // Attempt to retrieve the user from the data store by email
-      User.findOne({
-        where : {
-          emailAddress : credentials.name
-        }
-      }).then(user => {
+      const user = users.find(u => u.emailAddress === credentials.name);
   
       // If a user was successfully retrieved from the data store...
       if (user) {
@@ -36,19 +32,14 @@ const authenticateUser = async(req, res, next) => {
         // If the passwords match...
         if (authenticated) {
           console.log(`Authentication successful for username: ${user.emailAddress}`);
-          
-          if (req.originalUrl.includes('users')) {
-            req.body.id = user.id; 
-          } else if (req.originalUrl.includes('courses')) {
-            req.body.userId = user.id; 
-          }       
+
+          req.currentUser = user;
         } else {
           message = `Authentication failure for username: ${user.emailAddress}`;
         }
       } else {
         message = `User not found for username: ${credentials.name}`;
       }
-     })
     } else {
       message = 'Auth header not found';
     }

@@ -76,7 +76,7 @@ export default class Data {
 
 
   //method to create course
-  async createCourse(course, {emailAddress, password}) {
+  async createCourse(course, emailAddress, password) {
     const response = await this.api('/courses/', 'POST', course, true, {emailAddress, password});
   
     if (response.status === 201) { 
@@ -101,7 +101,7 @@ export default class Data {
 
   //method to delete course
   async courseDelete(id, emailAddress, password) {
-    if(id) {
+  
       const response = await this.api(`/courses/${id}`, 'DELETE', null, true, {emailAddress, password})
       if (response.status === 204) { 
             console.log(response.status);
@@ -110,7 +110,7 @@ export default class Data {
             console.log(response.status);
             throw new Error();
       }
-    }
+ 
 
 
   //   console.log(id);
