@@ -21,7 +21,11 @@ const authenticateUser = async(req, res, next) => {
     // If the user's credentials are available...
     if (credentials) {
       // Attempt to retrieve the user from the data store by email
-      const user = users.find(u => u.emailAddress === credentials.name);
+      User.findOne({
+        where : {
+          emailAddress : credentials.name
+        }
+      }).then(user => {
   
       // If a user was successfully retrieved from the data store...
       if (user) {
@@ -32,14 +36,19 @@ const authenticateUser = async(req, res, next) => {
         // If the passwords match...
         if (authenticated) {
           console.log(`Authentication successful for username: ${user.emailAddress}`);
-
-          req.currentUser = user;
+          
+          if (req.originalUrl.includes('users')) {
+            req.body.id = user.id; 
+          } else if (req.originalUrl.includes('courses')) {
+            req.body.userId = user.id; 
+          }       
         } else {
           message = `Authentication failure for username: ${user.emailAddress}`;
         }
       } else {
         message = `User not found for username: ${credentials.name}`;
       }
+     })
     } else {
       message = 'Auth header not found';
     }
@@ -253,7 +262,7 @@ router.put('/courses/:id', [
 }));
 
 // DELETE /api/courses/:id 204 - Deletes a course and returns no content
-router.delete("/courses/:id", authenticateUser, asyncHandler(async(req,res, next) => {
+router.delete("/courses/:id", authenticateUser, asyncHandler(async(req,res, next) => { // authenticateUser, 
     const course = await Course.findByPk(req.params.id);
     if(course) {
         await course.destroy();

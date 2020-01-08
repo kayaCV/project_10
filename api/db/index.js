@@ -17,7 +17,8 @@ const models = {};
 
 // Import all of the models.
 
-try { // added to try
+// try { // added to try
+        
   fs
     .readdirSync(path.join(__dirname, 'models'))
     .forEach((file) => {
@@ -33,10 +34,9 @@ try { // added to try
       models[modelName].associate(models);
     }
   });
-  console.log("Successfully connected to the database")
-} catch (error) {
-  console.error('Error connecting to the database: ', error);
-}
+// } catch (error) {
+//   console.error('Error connecting to the database: ', error);
+// }
 
 module.exports = {
   sequelize,
