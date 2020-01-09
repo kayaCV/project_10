@@ -8,7 +8,7 @@ export class Provider extends Component {
 
     state = {
         authenticatedUser: Cookies.getJSON('authenticatedUser') || null,
-        authUserPassword: Cookies.getJSON('userPassword') || null 
+        authUserPassword: Cookies.getJSON('authUserPassword') || null, 
     };
 
     constructor() {
@@ -34,14 +34,11 @@ export class Provider extends Component {
             </Context.Provider>  
           );
     }
-
-
+    
 
     signIn = async (emailAddress, password) => {
         const user = await this.data.getUser(emailAddress, password);
-        console.log(this.state.authenticatedUser, "before if");
         if (user !== null) {
-          console.log(this.state.authenticatedUser, "before setstate")
           this.setState(() => {
             return {
               authenticatedUser: user,
@@ -49,7 +46,6 @@ export class Provider extends Component {
             };
           }); 
        
-          console.log(this.state.authenticatedUser, "after this.setstate");
           Cookies.set('authUserPassword', JSON.stringify(password), {expires: 1});
           Cookies.set('authenticatedUser', JSON.stringify(user), {expires: 1});
         }

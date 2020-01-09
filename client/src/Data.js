@@ -77,24 +77,20 @@ export default class Data {
 
   //method to create course
   async createCourse(course, emailAddress, password) {
+    console.log(course)
     const response = await this.api('/courses/', 'POST', course, true, {emailAddress, password});
   
     if (response.status === 201) { 
-      console.log(response);
       return [];
     } else if (response.status === 400) {
-      console.log(response); 
-      return response.json(); 
+      return response.json().then(data => {
+        return data.errors;
+      }); 
     } else if (response.status === 401) {
-      console.log(response);
       return response.json().then(data => {
         return data;//.errors;
       });
-    } else if (response.status === 200) {
-      console.log(response); 
     } else {
-      console.log(response);
-      console.log(response.status);
       throw new Error();
     }
   }
@@ -103,11 +99,14 @@ export default class Data {
   async courseDelete(id, emailAddress, password) {
   
       const response = await this.api(`/courses/${id}`, 'DELETE', null, true, {emailAddress, password})
+      // console.log(`/courses/${id}`);
+      // console.log(password);
+      // console.log(emailAddress);
       if (response.status === 204) { 
-            console.log(response.status);
+            console.log(response);
             return [];
       } else {
-            console.log(response.status);
+            console.log(response);
             throw new Error();
       }
  

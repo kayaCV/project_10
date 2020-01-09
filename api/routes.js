@@ -28,7 +28,10 @@ const authenticateUser = async(req, res, next) => {
         //  compare password (from the Authorization header) to  password from the data store.
         const authenticated = bcryptjs
           .compareSync(credentials.pass, user.password);
-  
+        
+          console.log(credentials.pass)
+          console.log(user.password)
+          console.log(authenticated)
         // If the passwords match...
         if (authenticated) {
           console.log(`Authentication successful for username: ${user.emailAddress}`);

@@ -126,6 +126,7 @@ export default class UserSignUp extends Component {
         .then( errors => {
           if (errors.length) {
             this.setState({ errors });
+            console.log(errors)
           } else {
               console.log("logged on!!");
             context.actions.signIn(emailAddress, password)

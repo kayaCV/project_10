@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import {Link} from 'react-router-dom';
 
 
 export default class CourseDetail extends Component {
@@ -8,7 +9,6 @@ export default class CourseDetail extends Component {
         this.state = {
           course: {
               user:{
-
               }
           },
         }
@@ -33,6 +33,7 @@ export default class CourseDetail extends Component {
     render() {
         const {course} = this.state;
         console.log(course);
+        console.log(this.props.context.data)
         // const id = this.props.match.params.id;   
 
         const user = course.user;
@@ -42,15 +43,30 @@ export default class CourseDetail extends Component {
             let materialsList = course.materialsNeeded.split('*').filter(liItem=>liItem!=='');
             materials = materialsList.map( material => <li key={materialsList.indexOf(material)}>{material}</li>);
             console.log(materials)
-        } //else {
+        } 
 
-    // }
+// add rendering logic so that the "Update Course" and "Delete Course" buttons only display if: 
+// There's an authenticated user.
+// And the authenticated user's ID matches that of the user who owns the course.
+
 
     return (
         <div>
             <div className="actions--bar">
                 <div className="bounds">
-                    <div className="grid-100"><span><a className="button" href={`/courses/${this.props.match.params.id}/update`}>Update Course</a><a className="button" onClick={this.deleteCourse} href="*">Delete Course</a></span><a className="button button-secondary" href="/">Return to List</a></div>
+                    <div className="grid-100">
+                      {
+                        this.props.context.authenticatedUser && this.props.context.authenticatedUser.id === this.state.course.user.id ?
+                        <React.Fragment>
+                            <span>
+                                <Link className="button" to={`/courses/${this.props.match.params.id}/update`}>Update Course</Link>
+                                <Link className="button" onClick={() => this.props.context.data.courseDelete(this.props.match.params.id, this.props.context.authenticatedUser.emailAddress, this.props.context.authUserPassword).then( () => this.props.history.push('/'))} to="#">Delete Course</Link>
+                            </span>
+                        </React.Fragment> : <React.Fragment></React.Fragment>
+                      }
+                        
+                        <Link className="button button-secondary" to="/">Return to List</Link>
+                    </div>
                 </div>
             </div>
             <div className="bounds course--detail">
@@ -86,39 +102,46 @@ export default class CourseDetail extends Component {
     }
 
     deleteCourse() {
-        const {id} = this.props.context.match.params;
-        const {emailAddress, password} = this.props.context.authenticatedUser;
-
-        this.props.context.data.courseDelete(id, {emailAddress, password})//, this.state.user.emailAddress, this.state.user.password)
-            .then(errors => {
-                if(errors.length) {
-                    console.log(errors);
-                    this.setState({errors})
-                } else {
-                    // this.props.history.push('/');
-                    console.log("no errors");
-                }
-            })
-            .catch(err => {
-                console.log(err);
-            })
-        
-
-        // const {context} = this.props;
-        // context.data.courseDelete(context.match.params.id, context.authenticatedUser.emailAddress, context.authenticatedUser.password)
-        //     .then(errors => {
-        //         if(errors.length) {
-        //             console.log(errors);
-        //             this.setState({errors})
-        //         } else {
-        //             // this.props.history.push('/');
-        //             console.log("no errors");
-        //         }
-        //     })
-        //     .catch(err => {
-        //         console.log(err);
-        //     })
+        this.props.context.data
+            .courseDelete(this.props.match.params.id, this.props.context.authenticatedUser.emailAddress, this.props.context.authUserPassword)
+            .then( () => this.props.history.push('/'))
     }
+    // deleteCourse() {
+    //     const {context} = this.props;
+    //     const {id} = context.match.params;
+    //     const {emailAddress} = context.authenticatedUser;
+    //     const password = context.authUserPassword;
+    //     console.log(context.user.data)
+    //     context.data.courseDelete(id, emailAddress, password)//, this.state.user.emailAddress, this.state.user.password)
+    //         .then(errors => {
+    //             if(errors.length) {
+    //                 console.log(errors);
+    //                 this.setState({errors})
+    //             } else {
+    //                 this.props.history.push('/');
+    //                 console.log("no errors");
+    //             }
+    //         })
+    //         .catch(err => {
+    //             console.log(err);
+    //         })
+            
+
+    //     // const {context} = this.props;
+    //     // context.data.courseDelete(context.match.params.id, context.authenticatedUser.emailAddress, context.authenticatedUser.password)
+    //     //     .then(errors => {
+    //     //         if(errors.length) {
+    //     //             console.log(errors);
+    //     //             this.setState({errors})
+    //     //         } else {
+    //     //             // this.props.history.push('/');
+    //     //             console.log("no errors");
+    //     //         }
+    //     //     })
+    //     //     .catch(err => {
+    //     //         console.log(err);
+    //     //     })
+    // }
 
 
 
