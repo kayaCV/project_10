@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import {Link} from 'react-router-dom';
+import ReactMarkdown from 'react-markdown';
 
 
 export default class CourseDetail extends Component {
@@ -18,7 +19,6 @@ export default class CourseDetail extends Component {
     this.props.context.data.getSingleCourse(this.props.match.params.id)
       .then(responseData => {
         this.setState({ course: responseData})
-        console.log(responseData)
       })
       .catch(err => {
         console.log('Error fetching and parsing data')
@@ -32,18 +32,8 @@ export default class CourseDetail extends Component {
 
     render() {
         const {course} = this.state;
-        console.log(course);
-        console.log(this.props.context.data)
-        // const id = this.props.match.params.id;   
-
+    
         const user = course.user;
-        let materials;
-        if(course.materialsNeeded) {
-            console.log(course.materialsNeeded)
-            let materialsList = course.materialsNeeded.split('*').filter(liItem=>liItem!=='');
-            materials = materialsList.map( material => <li key={materialsList.indexOf(material)}>{material}</li>);
-            console.log(materials)
-        } 
 
 // add rendering logic so that the "Update Course" and "Delete Course" buttons only display if: 
 // There's an authenticated user.
@@ -77,7 +67,7 @@ export default class CourseDetail extends Component {
                         <p>By {user.firstName} {user.lastName}</p>
                     </div>
                     <div className="course--description">
-                        <p>{course.description}</p>
+                        <ReactMarkdown source={course.description} />
                     </div>
                 </div>
                 <div className="grid-25 grid-right">
@@ -90,7 +80,7 @@ export default class CourseDetail extends Component {
                             <li className="course--stats--list--item">
                                 <h4>Materials Needed</h4>
                                 <ul>
-                                    {materials}
+                                    <ReactMarkdown source={course.materialsNeeded} />
                                 </ul>
                             </li>
                         </ul>

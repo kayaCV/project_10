@@ -1,23 +1,75 @@
-import React, { Component } from 'react';
+ import React, { Component } from 'react';
+ import Form from './Form';
+
+ export default class UpdateCourse extends Component {
+
+  state = {
+      title: '',
+      description: '',
+      estimatedTime: '',
+      materialsNeeded: '',
+      errors: [],
+  }
+
+  fetchCourse = () => {
+    this.props.context.data.getSingleCourse(this.props.match.params.id)
+      .then(responseData => {
+        const {title, description,estimatetime, materialsNeeded} = responseData;
+        this.setState({ 
+          title,
+          description,
+          estimatetime, 
+          materialsNeeded,
+          firstName: responseData.user.firstName,
+          lastName: responseData.user.lastName
+        })
+      })
+      .catch(err => {
+        console.log('Error fetching and parsing data')
+      })
+  }
+  
+  componentDidMount() {
+    this.fetchCourse();
+}
 
 
-class UpdateCourse extends Component {
-render() {
+
+  render() {
+    // const { context } = this.props;
+    const {
+        title, 
+        description,
+        estimatedTime, 
+        materialsNeeded,
+        firstName,
+        lastName,
+        errors,
+      } = this.state;
+      
+
 
     return (
         <div className="bounds course--detail">
         <h1>Update Course</h1>
         <div>
-          <form>
+          <Form
+            cancel={this.cancel}
+            errors={errors}
+            submit={this.submit}
+            submitButtonText="Update Course"
+            elements={() => (
+              <React.Fragment>
             <div className="grid-66">
               <div className="course--header">
                 <h4 className="course--label">Course</h4>
-                <div><input id="title" name="title" type="text" className="input-title course--title--input" placeholder="Course title..."
-                    value="Build a Basic Bookcase"></input></div>
-                <p>By PersonWhoWroteThis</p>
+                <div>
+                  <input id="title" name="title" type="text" className="input-title course--title--input" placeholder="Course title..." value={title} onChange={this.change}></input>
+                </div>
+                <p>By {firstName} {lastName}</p>
               </div>
               <div className="course--description">
-                <div><textarea id="description" name="description" className="" placeholder="Course description...">Some random description...</textarea></div>
+                <div><textarea id="description" name="description" className="" placeholder="Course description..."  value={description}  onChange={this.change}></textarea></div>
               </div>
             </div>
             <div className="grid-25 grid-right">
@@ -25,32 +77,70 @@ render() {
                 <ul className="course--stats--list">
                   <li className="course--stats--list--item">
                     <h4>Estimated Time</h4>
-                    <div><input id="estimatedTime" name="estimatedTime" type="text" className="course--time--input"
-                        placeholder="Hours" value="14 hours"></input></div>
+                    <div><input id="estimatedTime" name="estimatedTime" type="text" className="course--time--input" placeholder="Hours" value={estimatedTime}  onChange={this.change}></input></div>
                   </li>
                   <li className="course--stats--list--item">
                     <h4>Materials Needed</h4>
-                    <div><textarea id="materialsNeeded" name="materialsNeeded" className="" placeholder="List materials...">* 1/2 x 3/4 inch parting strip
-* 1 x 2 common pine
-* 1 x 4 common pine
-* 1 x 10 common pine
-* 1/4 inch thick lauan plywood
-* Finishing Nails
-* Sandpaper
-* Wood Glue
-* Wood Filler
-* Minwax Oil Based Polyurethane
-</textarea></div>
+                    <div><textarea id="materialsNeeded" name="materialsNeeded" className="" placeholder="List materials..." value={materialsNeeded || ''} onChange={this.change}></textarea></div>
                   </li>
                 </ul>
               </div>
             </div>
-            <div className="grid-100 pad-bottom"><button className="button" type="submit">Update Course</button><button className="button button-secondary" onClick="event.preventDefault(); location.href='course-detail.html';">Cancel</button></div>
-          </form>
+
+              </React.Fragment>
+            )} />
         </div>
       </div>
     )
 }
+change = (event) => {
+  const name = event.target.name;
+  const value = event.target.value;
+
+  this.setState(() => {
+    return {
+      [name]: value
+    };
+  });
 }
 
-export default UpdateCourse;  
+submit = () => {
+  const { context } = this.props;
+  const {
+      title,
+      description,
+      estimatedTime,
+      materialsNeeded,
+  } = this.state;
+  const {emailAddress} = context.authenticatedUser;
+  const password = context.authUserPassword;
+
+  // Create course
+  const course = {
+      title,
+      description,
+      estimatedTime,
+      materialsNeeded,
+  };
+  const {id} = this.props.match.params;
+
+  context.data.updateCourses(id,course, emailAddress, password)
+    .then( errors => {
+      if (errors.length) {       
+        this.setState({ errors });
+      } else {
+          this.props.history.push(`/courses/${id}`);        
+      }
+    })
+    .catch((err) => {
+      console.log(err);
+      this.props.history.push('/error');
+    });
+
+}
+  cancel = () => {
+    this.props.history.push(`/courses/${this.props.match.params.id}`);
+  }
+
+}
+
