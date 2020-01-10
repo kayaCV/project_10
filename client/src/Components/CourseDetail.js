@@ -96,46 +96,5 @@ export default class CourseDetail extends Component {
             .courseDelete(this.props.match.params.id, this.props.context.authenticatedUser.emailAddress, this.props.context.authUserPassword)
             .then( () => this.props.history.push('/'))
     }
-    // deleteCourse() {
-    //     const {context} = this.props;
-    //     const {id} = context.match.params;
-    //     const {emailAddress} = context.authenticatedUser;
-    //     const password = context.authUserPassword;
-    //     console.log(context.user.data)
-    //     context.data.courseDelete(id, emailAddress, password)//, this.state.user.emailAddress, this.state.user.password)
-    //         .then(errors => {
-    //             if(errors.length) {
-    //                 console.log(errors);
-    //                 this.setState({errors})
-    //             } else {
-    //                 this.props.history.push('/');
-    //                 console.log("no errors");
-    //             }
-    //         })
-    //         .catch(err => {
-    //             console.log(err);
-    //         })
-            
-
-    //     // const {context} = this.props;
-    //     // context.data.courseDelete(context.match.params.id, context.authenticatedUser.emailAddress, context.authenticatedUser.password)
-    //     //     .then(errors => {
-    //     //         if(errors.length) {
-    //     //             console.log(errors);
-    //     //             this.setState({errors})
-    //     //         } else {
-    //     //             // this.props.history.push('/');
-    //     //             console.log("no errors");
-    //     //         }
-    //     //     })
-    //     //     .catch(err => {
-    //     //         console.log(err);
-    //     //     })
-    // }
-
-
-
-
-
 };
 

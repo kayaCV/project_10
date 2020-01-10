@@ -14,7 +14,6 @@ class UserSignIn extends Component {
         password,
         errors,
       } = this.state;
-      console.log(this.state.emailAddress)
 
         return (
             <div className="bounds">
@@ -55,13 +54,11 @@ class UserSignIn extends Component {
   
     submit = () => {
       const { context } = this.props;
-      const { from } = this.props.location.state || { from: { pathname: '/authenticated' } };
+      const { from } = this.props.location.state || { from: { pathname: '/' } };
       const { emailAddress, password } = this.state;
   
       context.actions.signIn(emailAddress, password)
         .then((user) => {
-          console.log(emailAddress);
-          console.log(password);
           if (user === null) {
             this.setState(() => {
               return { errors: [ 'Sign-in was unsuccessful' ] };
